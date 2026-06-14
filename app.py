@@ -12,7 +12,7 @@ st.set_page_config(layout="wide", page_title="India Market Dashboard")
 @st.cache_data(ttl=600)
 def fetch_api_data(endpoint: str, params: dict = None):
     try:
-        response = requests.get(f"{BACKEND_API_URL}{endpoint}", params=params, timeout=15)
+        response = requests.get(f"{BACKEND_API_URL}{endpoint}", params=params, timeout=90)
         if response.status_code == 200:
             return response.json()
     except Exception as e:
