@@ -12,8 +12,12 @@ st.set_page_config(layout="wide", page_title="India Market Dashboard")
 @st.cache_data(ttl=600)
 def fetch_api_data(endpoint: str, params: dict = None):
     try:
-        # 90 second timeout allows Render to wake up and process yfinance loops
-        res = requests.get(f"{BACKEND_API_URL}{endpoint}", params=params, timeout=90)
+        # STRIP out any accidental spaces or slashes from your URL string
+        clean_base_url = BACKEND_API_URL.strip().rstrip('/')
+        clean_endpoint = endpoint.strip()
+        
+        res = requests.get(f"{clean_base_url}{clean_endpoint}", params=params, timeout=90)
+        
         if res.status_code == 200:
             return res.json()
         else:
@@ -29,10 +33,9 @@ st.title("🇮🇳 Institutional Market Engine")
 macro_data = fetch_api_data("/api/macro")
 
 if macro_data:
-    m1, m2, m3 = st.columns(3)
+    m1, m2 = st.columns(2)
     m1.metric("RBI Repo Rate", macro_data.get("repo_rate", "N/A"))
     m2.metric("RBI CRR", macro_data.get("crr", "N/A"))
-    m3.metric("Backend Status", "Connected ✅")
 else:
     st.warning("Could not connect to backend for Macro Data.")
 
